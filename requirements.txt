@@ -1,0 +1,4 @@
+huggingface_hub==0.14.1
+huggingface_hub==0.19.4
+python-dotenv==1.0.0
+schedule==1.2.1
