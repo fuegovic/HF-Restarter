@@ -24,3 +24,4 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ github.actor }}/hf-restarter:latest
+          load: true
