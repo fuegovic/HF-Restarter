@@ -2,14 +2,19 @@ name: Publish Docker image to ghcr.io
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+              
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2
@@ -19,8 +24,12 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          tags: ghcr.io/${{ github.actor }}/hf-restarter:latest
-          load: true
+        run: |
+          docker build -f Dockerfile -t hf-restarter .
+
+      - name: Tag and push images
+        run: |
+          docker tag hf-restarter:latest ghcr.io/${{ github.repository_owner }}/hf-restarter:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/hf-restarter:${{ github.sha }}
+          docker tag hf-restarter:latest ghcr.io/${{ github.repository_owner }}/hf-restarter:latest
+          docker push ghcr.io/${{ github.repository_owner }}/hf-restarter:latest
